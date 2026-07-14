@@ -14,7 +14,7 @@ def main() -> None:
     """Load the selected model and persist holdout metrics."""
     _, test_features, _, test_target = load_split_data(settings.features_path, settings.random_seed)
     configuration = json.loads(Path("models/model_config.json").read_text(encoding="utf-8"))
-    model = ModelFactory.create_model("mlp", input_dim=3, hidden_dim=configuration["hidden_dim"])
+    model = ModelFactory.create_model("mlp", input_dim=test_features.shape[1], hidden_dim=configuration["hidden_dim"])
     model.load_state_dict(torch.load(settings.model_path, map_location="cpu"))
     model.eval()
     probabilities = model(torch.tensor(test_features, dtype=torch.float32)).detach().numpy().ravel()

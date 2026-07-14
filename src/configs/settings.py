@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     features_path: str = "data/features/dataset.csv"
     model_path: str = "models/model.pt"
     
-    mlflow_tracking_uri: str = "http://localhost:5000"
+    mlflow_tracking_uri: str = "http://localhost:5001"
     random_seed: int = 42
 
     class Config:

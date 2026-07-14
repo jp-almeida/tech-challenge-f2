@@ -4,7 +4,6 @@ stages:
     deps:
       - src/data/preprocess.py
     outs:
-      - data/raw/dataset.csv
       - data/processed/dataset.csv
 
   feature_eng:

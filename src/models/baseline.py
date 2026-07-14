@@ -3,26 +3,40 @@ from typing import Any
 
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.linear_model import LogisticRegression
 
 class BaselineModel(BaseEstimator):
-    """Random Forest classifier used as a recommendation baseline."""
+    """Baseline wrapper for classical Scikit-Learn classifiers."""
 
-    def __init__(self, n_estimators: int = 100, random_state: int = 42) -> None:
-        """Initialize the baseline with deterministic parameters."""
-        self.model = RandomForestClassifier(
-            n_estimators=n_estimators, random_state=random_state, n_jobs=-1
-        )
+    def __init__(
+        self,
+        algorithm: str = "random_forest",
+        random_state: int = 42,
+        **kwargs,
+    ) -> None:
 
-    def fit(self, features: Any, target: Any) -> "BaselineModel":
-        """Fit the classifier."""
+        if algorithm == "random_forest":
+            self.model = RandomForestClassifier(
+                random_state=random_state,
+                n_estimators=kwargs.get("n_estimators", 100),
+                n_jobs=-1,
+            )
+
+        elif algorithm == "logistic_regression":
+            self.model = LogisticRegression(
+                random_state=random_state,
+                max_iter=1000,
+            )
+
+        else:
+            raise ValueError(f"Unknown baseline algorithm: {algorithm}")
+
+    def fit(self, features: Any, target: Any):
         self.model.fit(features, target)
         return self
 
-    def predict(self, features: Any) -> Any:
-        """Predict purchase labels."""
+    def predict(self, features: Any):
         return self.model.predict(features)
 
-    def predict_proba(self, features: Any) -> Any:
-        """Predict purchase probabilities."""
+    def predict_proba(self, features: Any):
         return self.model.predict_proba(features)[:, 1]

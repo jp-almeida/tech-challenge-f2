@@ -1,4 +1,5 @@
 """Metrics shared by training and evaluation."""
+
 import numpy as np
 from sklearn.metrics import (
     accuracy_score,
@@ -10,9 +11,13 @@ from sklearn.metrics import (
 )
 
 
-def calculate_binary_metrics(target: np.ndarray, probabilities: np.ndarray) -> dict[str, float]:
-    """Calculate six classification and probability-quality metrics."""
+def calculate_binary_metrics(
+    target: np.ndarray,
+    probabilities: np.ndarray,
+) -> dict[str, float]:
+
     predictions = (probabilities >= 0.5).astype(int)
+
     return {
         "accuracy": float(accuracy_score(target, predictions)),
         "precision": float(precision_score(target, predictions, zero_division=0)),
