@@ -1,0 +1,91 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python -m src.data.preprocess
+    deps:
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: cb563ca0282437af663cd26590e8e670
+      size: 1080
+    outs:
+    - path: data/processed/dataset.csv
+      hash: md5
+      md5: fb56db9c03ee90b7cc246bb4412dde65
+      size: 345070
+    - path: data/raw/dataset.csv
+      hash: md5
+      md5: d674952a8211c4d8e35248c44e291fdf
+      size: 346177
+  feature_eng:
+    cmd: python -m src.data.feature_engine
+    deps:
+    - path: data/processed/dataset.csv
+      hash: md5
+      md5: fb56db9c03ee90b7cc246bb4412dde65
+      size: 345070
+    - path: src/data/feature_engine.py
+      hash: md5
+      md5: c232212902ba81ddc8b6b64dd6f6c014
+      size: 693
+    outs:
+    - path: data/features/dataset.csv
+      hash: md5
+      md5: 1f5e1b2781056b3e8ca4119631332451
+      size: 576226
+  train:
+    cmd: python -m src.training.train
+    deps:
+    - path: data/features/dataset.csv
+      hash: md5
+      md5: 1f5e1b2781056b3e8ca4119631332451
+      size: 576226
+    - path: src/models/
+      hash: md5
+      md5: d5ccfb8ecfbd9c7ef3fb864677a23aae.dir
+      size: 2731
+      nfiles: 4
+    - path: src/training/train.py
+      hash: md5
+      md5: 0e027f1f87930e7e2143f961b1821af7
+      size: 3996
+    outs:
+    - path: models/model.pt
+      hash: md5
+      md5: e76c71c1d494c982f54d04779a311b00
+      size: 3593
+    - path: models/model_config.json
+      hash: md5
+      md5: a417af3c3bf60fbc984f5b274aa46a3f
+      size: 18
+    - path: reports/training_metrics.json
+      hash: md5
+      md5: 5a907f4498182de8a9071138b7a99236
+      size: 201
+  evaluate:
+    cmd: python -m src.training.evaluate
+    deps:
+    - path: data/features/dataset.csv
+      hash: md5
+      md5: 1f5e1b2781056b3e8ca4119631332451
+      size: 576226
+    - path: models/model.pt
+      hash: md5
+      md5: e76c71c1d494c982f54d04779a311b00
+      size: 3593
+    - path: models/model_config.json
+      hash: md5
+      md5: a417af3c3bf60fbc984f5b274aa46a3f
+      size: 18
+    - path: src/training/evaluate.py
+      hash: md5
+      md5: 79aa54b8adcf403d5d66adfe67e272c2
+      size: 1219
+    - path: src/training/metrics.py
+      hash: md5
+      md5: 859831fd0db32fdd3727aaf4df44670d
+      size: 892
+    outs:
+    - path: reports/evaluation_metrics.json
+      hash: md5
+      md5: 48155bb90c6adab9a7bcde089c568100
+      size: 179

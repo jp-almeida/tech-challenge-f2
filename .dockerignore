@@ -1,5 +1,4 @@
 .git
-.dvc
 data/
 models/
 __pycache__/

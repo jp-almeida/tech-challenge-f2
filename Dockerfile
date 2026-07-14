@@ -1,23 +1,20 @@
-FROM python:3.10-slim AS builder
+FROM python:3.10-slim
 
 WORKDIR /app
-ENV PIP_NO_CACHE_DIR=1
 
-COPY pyproject.toml README.md ./
-RUN pip install poetry==1.8.3 \
-    && poetry config virtualenvs.in-project true \
-    && poetry install --only main --no-root --no-interaction --no-ansi
-
-FROM python:3.10-slim AS runtime
-
-WORKDIR /app
-ENV PATH="/app/.venv/bin:$PATH" \
+ENV PIP_NO_CACHE_DIR=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-COPY --from=builder /app/.venv /app/.venv
-COPY src ./src
-COPY dvc.yaml ./
-COPY .dvc ./.dvc
+RUN pip install poetry==1.8.3
 
-CMD ["python", "-m", "src.training.train"]
+COPY pyproject.toml poetry.lock README.md ./
+
+RUN poetry config virtualenvs.create false \
+    && poetry install --only main --no-root --no-interaction --no-ansi
+
+CMD ["dvc", "repro"]
+
+RUN apt-get update \
+ && apt-get install -y git \
+ && rm -rf /var/lib/apt/lists/*
