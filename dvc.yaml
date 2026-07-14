@@ -1,0 +1,38 @@
+stages:
+  preprocess:
+    cmd: python -m src.data.preprocess
+    deps:
+      - src/data/preprocess.py
+    outs:
+      - data/raw/dataset.csv
+      - data/processed/dataset.csv
+
+  feature_eng:
+    cmd: python -m src.data.feature_engine
+    deps:
+      - src/data/feature_engine.py
+      - data/processed/dataset.csv
+    outs:
+      - data/features/dataset.csv
+
+  train:
+    cmd: python -m src.training.train
+    deps:
+      - src/training/train.py
+      - src/models/
+      - data/features/dataset.csv
+    outs:
+      - models/model.pt
+      - models/model_config.json
+      - reports/training_metrics.json
+
+  evaluate:
+    cmd: python -m src.training.evaluate
+    deps:
+      - src/training/evaluate.py
+      - src/training/metrics.py
+      - data/features/dataset.csv
+      - models/model.pt
+      - models/model_config.json
+    metrics:
+      - reports/evaluation_metrics.json
